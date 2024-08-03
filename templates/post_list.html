@@ -1,0 +1,24 @@
+<!-- templates/blog/post_list.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Blog Posts{% endblock %}
+
+{% block content %}
+<h1>Blog Posts</h1>
+<div class="categories">
+    <a href="{% url 'postList' %}">All</a>
+    {% for category in categories %}
+        <a href="{% url 'post_list' category.id %}">{{ category.name }}</a>
+    {% endfor %}
+</div>
+<ul>
+    {% for post in posts %}
+        <li>
+            <h2>{{ post.title }}</h2>
+            <img src="{{ post.image.url }}" alt="{{ post.title }}" width="200">
+            <p>{{ post.summary|truncatewords:15 }}...</p>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            margin-top: 0px;
+            text-decoration: none;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .container {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar" style="height: 54.2206px; transform: translate(-13.3334px, -8.19608px); width: 1497.35px;">
+        <a href="/home/" style="transform: translate(4px); position: relative; left: 12px; top: 4px;">Home</a>
+        <a href="{% url 'LogIn' %}" style="width: 59.1299px; transform: translate(766.275px, -2.35294px); height: 20.3676px; position: relative; left: 564px; top: 6px;">Logout</a>
+    </div>
+    <div class="container">
+        <h1>{{catog}}</h1>
+        <ul>
+            {% for post in posts %}
+                <li>
+                    <h2>{{ post.iTitle }}</h2>
+                    <img src="{{ post.iImage.url }}" alt="{{ post.iTitle }}" width="200">
+                    <p>{{ post.iSummary |truncatechars:15 }}</p>
+                    <hr>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+    }
+    
+    .navbar {
+        box-shadow: 0 4px 6px -6px #222;
+    }
+    
+    .container {
+        margin-top: 80px; /* Adjusted for fixed navbar */
+    }
+    
+    .card {
+        margin-top: 20px;
+    }
+    
+    .card-header {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .card-body {
+        background-color: #ffffff;
+    }
+    
+    .profile-picture {
+        max-width: 100%;
+        height: auto;
+        border-radius: 50%;
+        border: 2px solid #007bff;
+    }
+    
+    h1 {
+        color: #007bff;
+    }
+    
+    p {
+        font-size: 1.1em;
+    }
+    </style>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <a class="navbar-brand" href="{% url 'home' %}">Dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav mr-auto">
+                {% if logged_in == "Doctor" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'myPost' %}">Blog</a>
+                    </li>
+                {% endif %}
+                {% if logged_in == "Patient" %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="patientDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Blogs
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="patientDropdown">
+                            <a class="dropdown-item" href="/mentalhealth/">Mental Health</a>
+                            <a class="dropdown-item" href="/heart/">Heart Disease</a>
+                            <a class="dropdown-item" href="/covid/">Covid 19</a>
+                            <a class="dropdown-item" href="/immune/">Immunization</a>
+                        </div>
+                    </li>
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'LogOut' %}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container mt-5 pt-4">
+        <h1 class="mb-4">User Dashboard</h1>
+        <div class="card">
+            <div class="card-header">
+                Profile Details
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <img id="profile-picture" src="{{ profile_picture }}" alt="Profile Picture" class="img-fluid rounded-circle">
+                    </div>
+                    <div class="col-md-9">
+                        <p><strong>Logged in as:</strong> {{ logged_in }}</p>
+                        <p><strong>First Name:</strong> {{ first_name }}</p>
+                        <p><strong>Last Name:</strong> {{ last_name }}</p>
+                        <p><strong>Username:</strong> {{ username }}</p>
+                        <p><strong>Email ID:</strong> {{ email }}</p>
+                        <p><strong>Address:</strong> {{ address_line1 }}, {{ city }}, {{ state }} - {{ pincode }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Include Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

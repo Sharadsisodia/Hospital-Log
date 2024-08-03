@@ -1,0 +1,19 @@
+<!-- templates/blog/my_posts.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}My Posts{% endblock %}
+
+{% block content %}
+<h1>My Posts</h1>
+<ul>
+    {% for post in posts %}
+        <li>
+            <h2>{{ post.iTitle }}</h2>
+            <img src="{{ post.iImage.url }}" alt="{{ post.iTitle }}" width="200">
+            <p>{{ post.iSummary |truncatechars:15 }}</p>
+            <hr>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
