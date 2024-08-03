@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Post{% endblock %}
+
+{% block content %}
+{% block extra_css %}
+<link rel="stylesheet" href="/static/createPost.css">
+{% endblock %}
+
+<div class="container">
+    <h1>Create Blog Post</h1>
+    <form action= "{% url 'myPost' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <div class="form-group">
+            <label for="image">Image</label>
+            <input type="file" id="image" name="image" required>
+        </div>
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+                <option value="Mental Health">Mental Health</option>
+                <option value="Heart Disease">Heart Disease</option>
+                <option value="Covid19">Covid19</option>
+                <option value="Immunization">Immunization</option>
+            </select>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" name='checkbox' style="margin: 0px 0px 10px 0px;" type="checkbox" value="True" id="flexCheckChecked">
+            <label class="form-check-label" for="flexCheckChecked">
+                Save as draft
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="summary">Summary</label>
+            <textarea id="summary" name="summary" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="content">Content</label>
+            <textarea id="content" name="content" rows="10" required></textarea>
+        </div>
+        <button type="submit" style="
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#0056b3'" onmouseout="this.style.backgroundColor='#007bff'">Submit</button>
+    </form>
+{% endblock %}
