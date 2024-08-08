@@ -6,7 +6,7 @@ from django.db import models
 # Create your models here.
 
 class patient(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,blank=True,related_name='patient')
+    user = models.OneToOneField(User, on_delete=models.CASCADE,blank=True,related_name='patient')
     p_Firstname=models.CharField(max_length=50)
     p_Lastname=models.CharField(max_length=50)
     p_Picture=models.ImageField(upload_to='images/')

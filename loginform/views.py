@@ -457,7 +457,7 @@ def appointSuccess(request):
         docUsername = request.POST.get('myButton')
         doctorna = get_object_or_404(doctor, d_Username=docUsername)
         patientna = request.user.patient  # Assuming the user is logged in as a patient
-
+        print(patientna)
         speci = request.POST.get('speciality')
         datee = request.POST.get('date')
         startTime = request.POST.get('start-time')
