@@ -516,6 +516,7 @@ def appointSuccess(request):
             "endtime": end_datetime.time()
         }
         return render(request, "appointSuccess.html", content)
+    return render(request,'appointSuccess.html')
 
 def credentials_to_dict(credentials):
     return {'token': credentials.token,
