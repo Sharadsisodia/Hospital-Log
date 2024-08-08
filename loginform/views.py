@@ -400,7 +400,8 @@ from django.http import HttpResponse
 
 # Path to the client secret JSON file
 CLIENT_SECRETS_FILE = os.path.join(settings.BASE_DIR, 'client_secret.json')
-
+import os
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 # Scopes for accessing Google Calendar API
 SCOPES = ['https://www.googleapis.com/auth/calendar.events']
 
@@ -597,7 +598,7 @@ def appointSuccess(request):
         }
         return render(request, "appointSuccess.html", content)
 
-    return render(request, 'appointSuccess.html')
+    # return render(request, 'appointSuccess.html')
 
 def credentials_to_dict(credentials):
     return {
