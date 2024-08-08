@@ -3,16 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Appointment Details</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-        .container {
+        .appointment-details {
+            background-color: #fff;
             padding: 20px;
-            margin-top: 35px;
-            float: left;
-            
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        .appointment-details h2 {
+            margin-top: 0;
+        }
+        .appointment-details p {
+            margin: 10px 0;
         }
     </style>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -46,18 +62,12 @@
             </ul>
         </div>
     </nav>
-    <div class="container">
-        <h1>{{catog}}</h1>
-        <ul>
-            {% for post in posts %}
-                <li>
-                    <h2>{{ post.iTitle }}</h2>
-                    <img src="{{ post.iImage.url }}" alt="{{ post.iTitle }}" width="200">
-                    <p>{{ post.iSummary |truncatechars:15 }}</p>
-                    <hr>
-                </li>
-            {% endfor %}
-        </ul>
+    <div class="appointment-details">
+        <h2>Appointment Confirmed with Details</h2>
+        <p><strong>Doctor's Name:</strong> {{doctorName.d_Firstname}} {{doctorName.d_Lastname}}</p>
+        <p><strong>Appointment Date:</strong>{{date}}</p>
+        <p><strong>Start Time:</strong> {{starttime}}</p>
+        <p><strong>End Time:</strong> {{endtime}}</p>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

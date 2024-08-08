@@ -17,6 +17,7 @@ class patient(models.Model):
     p_City=models.CharField(max_length=25)
     p_State=models.CharField(max_length=25)
     p_Pincode=models.CharField(max_length=14)
+
 class doctor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,blank=True,related_name='doctor')
     d_Username=models.CharField(max_length=20)
@@ -46,12 +47,9 @@ class imagePost(models.Model):
     def __str__(self):
         return self.iTitle
 
-
-class draft(models.Model):
-    dTitle = models.CharField(max_length=255)
-    dImage = models.ImageField(upload_to='images/')
-    dCategory = models.CharField(max_length=50)
-    dSummary = models.TextField()
-
-
-    dContent = models.TextField()
+class appointmentData(models.Model):
+    ap_username=models.CharField(max_length=20)
+    ap_specilist=models.CharField(max_length=30)
+    ap_date=models.DateField()
+    ap_startTime=models.TimeField()
+    ap_endTime=models.DateTimeField()

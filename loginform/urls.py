@@ -38,6 +38,11 @@ urlpatterns = [
     path('heart/',views.heart,name="heart"),
     path('covid/',views.covid,name="covid"),
     path('immune/',views.immune,name="immune"),
+    path('appointment/',views.appointment,name="appointment"),
+    path('appointmentForm/',views.appointmentForm,name="appointmentForm"),
+    path('appointSuccess/',views.appointSuccess,name="appointSuccess"),
+    path('google_auth/', views.google_auth, name='google_auth'),
+    path('oauth2callback/', views.oauth2callback, name='oauth2callback'),
 ]
 
 if settings.DEBUG:

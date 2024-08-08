@@ -1,8 +1,13 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from formlogin.models import patient,doctor,imagePost,Category,draft
+from django.shortcuts import render, redirect, get_object_or_404
+from formlogin.models import patient,doctor,imagePost,Category,appointmentData
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.decorators import login_required
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+from datetime import datetime, timedelta
 
 def logIn(request):
     return render(request, 'index.html')
@@ -17,10 +22,7 @@ def loginpage(request):
         r_role = request.POST.get('role')
         client_username = request.POST.get('username')
         client_password = request.POST.get('password')
-        print("fffffffff",r_role,client_password,client_username)
-        
         user = authenticate(request, username=client_username, password=client_password)
-        print('uss',user)
         
         if user is not None:
 
@@ -109,9 +111,6 @@ def loginpage(request):
 
 
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
 def signupComp(request):
     if request.method == 'POST':
         f_name = request.POST.get('firstName')
@@ -183,8 +182,7 @@ def createPost(request):
 
 from django.shortcuts import render
 
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+
 
 @login_required
 def home(request):
@@ -269,3 +267,260 @@ def covid(request):
         "posts":posts
     }
     return render(request,'patient_post.html',context)
+
+def appointment(request):
+    doc = doctor.objects.all()
+    return render(request,"appointment.html",{'doc': doc})
+
+def appointmentForm(request):
+    if request.method=="POST":
+        dUsername=request.POST.get("myButton")
+        userValue={
+            'dusername':dUsername
+        }
+    return render(request,"appointForm.html",userValue)
+
+
+
+# from google.oauth2 import service_account
+# from googleapiclient.discovery import build
+# from datetime import datetime, timedelta
+# from django.shortcuts import render, get_object_or_404
+
+# from django.shortcuts import render, redirect
+# from django.conf import settings
+# from google.oauth2.credentials import Credentials
+# from google_auth_oauthlib.flow import InstalledAppFlow
+# from google.auth.transport.requests import Request
+# from googleapiclient.discovery import build
+# import os
+# import datetime
+
+
+# SCOPES = ['https://www.googleapis.com/auth/calendar']
+
+# def authenticate_user(request):
+#     creds = None
+#     if 'credentials' in request.session:
+#         creds = Credentials.from_authorized_user_info(request.session['credentials'])
+#     if not creds or not creds.valid:
+#         if creds and creds.expired and creds.refresh_token:
+#             creds.refresh(Request())
+#         else:
+#             flow = InstalledAppFlow.from_client_secrets_file(
+#                 settings.GOOGLE_CREDENTIALS_JSON, SCOPES)
+#             creds = flow.run_local_server(port=0)
+#         request.session['credentials'] = creds.to_json()
+#     return creds
+
+# def appointSuccess(request):
+#     if request.method == 'POST':
+#         docUsername = request.POST.get('myButton')
+#         doctorna = get_object_or_404(doctor, d_Username=docUsername)
+#         speci = request.POST.get('speciality')
+#         datee = request.POST.get('date')
+#         startTime = request.POST.get('start-time')
+
+#         # Convert date and time strings to datetime objects
+#         datee = datetime.datetime.strptime(datee, "%Y-%m-%d").date()
+#         startTime = datetime.datetime.strptime(startTime, "%H:%M").time()
+
+#         # Combine date and time into a single datetime object
+#         start_datetime = datetime.datetime.combine(datee, startTime)
+#         end_datetime = start_datetime + datetime.timedelta(minutes=45)
+
+#         # Google Calendar API integration
+#         creds = authenticate_user(request)
+#         service = build('calendar', 'v3', credentials=creds)
+
+#         # Event details
+#         event = {
+#             'summary': f'Appointment: {speci}',
+#             'location': f'{doctorna.d_City}, {doctorna.d_State}',
+#             'description': f'Meeting with Dr. {doctorna.d_Firstname} {doctorna.d_Lastname}',
+#             'start': {
+#                 'dateTime': start_datetime.isoformat(),
+#                 'timeZone': 'Asia/Kolkata',
+#             },
+#             'end': {
+#                 'dateTime': end_datetime.isoformat(),
+#                 'timeZone': 'Asia/Kolkata',
+#             },
+#             'attendees': [
+#                 {'email': doctorna.d_EmailId}
+#             ],
+#             'reminders': {
+#                 'useDefault': False,
+#                 'overrides': [
+#                     {'method': 'email', 'minutes': 24 * 60},
+#                     {'method': 'popup', 'minutes': 10},
+#                 ],
+#             },
+#         }
+
+#         # Insert the event into the calendar
+#         event = service.events().insert(calendarId='primary', body=event).execute()
+
+#         # Save appointment data in the database
+#         apData = appointmentData(
+#             ap_username=doctorna.d_Username,
+#             ap_specilist=speci,
+#             ap_date=datee,
+#             ap_startTime=start_datetime.time(),  # store time part only
+#             ap_endTime=end_datetime.time()  # store time part only
+#         )
+#         apData.save()
+
+#         content = {
+#             "doctorName": doctorna,
+#             "date": datee,
+#             "starttime": start_datetime.time(),
+#             "endtime": end_datetime.time()
+#         }
+#         return render(request, "appointSuccess.html", content)
+
+
+
+
+
+
+
+
+
+import os
+import json
+from django.shortcuts import render, redirect
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import Flow
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from datetime import datetime, timedelta
+from django.conf import settings
+from django.http import HttpResponse
+
+# Path to the client secret JSON file
+CLIENT_SECRETS_FILE = os.path.join(settings.BASE_DIR, 'client_secret.json')
+
+# Scopes for accessing Google Calendar API
+SCOPES = ['https://www.googleapis.com/auth/calendar.events']
+
+def google_auth(request):
+    # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
+    flow = Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE, scopes=SCOPES)
+
+    # Specify the redirect URI. This should match the one in Google Cloud Console.
+    flow.redirect_uri = request.build_absolute_uri('/oauth2callback/')
+
+    # Generate URL for request to Google's OAuth 2.0 server.
+    authorization_url, state = flow.authorization_url(
+        access_type='offline',
+        include_granted_scopes='true')
+
+    # Store the state so the callback can verify the auth server response.
+    request.session['state'] = state
+
+    return redirect(authorization_url)
+
+def oauth2callback(request):
+    state = request.session['state']
+
+    # Create the flow using the client secrets file from Google Cloud Console.
+    flow = Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
+    flow.redirect_uri = request.build_absolute_uri('/oauth2callback/')
+
+    # Use the authorization response to fetch the OAuth 2.0 tokens.
+    authorization_response = request.build_absolute_uri()
+    flow.fetch_token(authorization_response=authorization_response)
+
+    # Store the credentials in the session.
+    credentials = flow.credentials
+    request.session['credentials'] = credentials_to_dict(credentials)
+
+    return redirect('appointSuccess')
+
+def appointSuccess(request):
+    if 'credentials' not in request.session:
+        return redirect('google_auth')
+
+    # Load the credentials from the session
+    credentials = Credentials(**request.session['credentials'])
+
+    # Ensure the credentials are still valid and refresh if necessary
+    if credentials.expired and credentials.refresh_token:
+        credentials.refresh(Request())
+
+    service = build('calendar', 'v3', credentials=credentials)
+
+    if request.method == 'POST':
+        docUsername = request.POST.get('myButton')
+        doctorna = get_object_or_404(doctor, d_Username=docUsername)
+        patientna = request.user.patient  # Assuming the user is logged in as a patient
+
+        speci = request.POST.get('speciality')
+        datee = request.POST.get('date')
+        startTime = request.POST.get('start-time')
+
+        # Convert date and time strings to datetime objects
+        datee = datetime.strptime(datee, "%Y-%m-%d").date()
+        startTime = datetime.strptime(startTime, "%H:%M").time()
+
+        # Combine date and time into a single datetime object
+        start_datetime = datetime.combine(datee, startTime)
+        end_datetime = start_datetime + timedelta(minutes=45)
+
+        # Event details
+        event = {
+            'summary': f'Appointment: {speci}',
+            'location': f'{doctorna.d_City}, {doctorna.d_State}',
+            'description': f'Meeting with Dr. {doctorna.d_Firstname} {doctorna.d_Lastname}',
+            'start': {
+                'dateTime': start_datetime.isoformat(),
+                'timeZone': 'Asia/Kolkata',
+            },
+            'end': {
+                'dateTime': end_datetime.isoformat(),
+                'timeZone': 'Asia/Kolkata',
+            },
+            'attendees': [
+                {'email': doctorna.d_EmailId},
+                {'email': patientna.p_EmailId},
+            ],
+            'reminders': {
+                'useDefault': False,
+                'overrides': [
+                    {'method': 'email', 'minutes': 24 * 60},
+                    {'method': 'popup', 'minutes': 10},
+                ],
+            },
+        }
+
+        # Insert the event into the calendar
+        event = service.events().insert(calendarId='primary', body=event).execute()
+
+        # Save appointment data in the database
+        apData = appointmentData(
+            ap_username=doctorna.d_Username,
+            ap_specilist=speci,
+            ap_date=datee,
+            ap_startTime=start_datetime.time(),  # store time part only
+            ap_endTime=end_datetime.time()  # store time part only
+        )
+        apData.save()
+
+        content = {
+            "doctorName": doctorna,
+            "date": datee,
+            "starttime": start_datetime.time(),
+            "endtime": end_datetime.time()
+        }
+        return render(request, "appointSuccess.html", content)
+
+def credentials_to_dict(credentials):
+    return {'token': credentials.token,
+            'refresh_token': credentials.refresh_token,
+            'token_uri': credentials.token_uri,
+            'client_id': credentials.client_id,
+            'client_secret': credentials.client_secret,
+            'scopes': credentials.scopes}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Appointment Booking</title>
+    <link rel="stylesheet" href="/static/appointForm.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Book an Appointment</h1>
+        <form id="appointment-form" method="post" action="{% url 'appointSuccess' %}">
+            {% csrf_token %}
+            <label for="speciality">Required Speciality:</label>
+            <input type="text" id="speciality" name="speciality" required>
+            
+            <label for="date">Date of Appointment:</label>
+            <input type="date" id="date" name="date" required>
+            
+            <label for="start-time">Start Time of Appointment:</label>
+            <input type="time" id="start-time" name="start-time" required>
+            
+            <button type="submit" value={{dusername}} name="myButton">Confirm</button>
+        </form>
+    </div>
+
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

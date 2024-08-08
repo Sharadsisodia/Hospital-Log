@@ -1,5 +1,5 @@
 from django.contrib import admin
-from formlogin.models import patient,doctor,Category, imagePost, draft
+from formlogin.models import patient,doctor,Category, imagePost, appointmentData
 
 # Register your models here.
 class pateintAdmin(admin.ModelAdmin):
@@ -11,17 +11,18 @@ class doctorAdmin(admin.ModelAdmin):
 class imagePostAdmin(admin.ModelAdmin):
     list_display=('iTitle','iImage','iCategory','iSummary','iContent')
 
-class draftAdmin(admin.ModelAdmin):
-    list_display=('dTitle','dImage','dCategory','dSummary','dContent')
-
 class CategoryAdmin(admin.ModelAdmin):
     # list_display=('title','image','summary')
     pass
 
+class appointmentDataAdmin(admin.ModelAdmin):
+    list_display=("ap_username","ap_specilist","ap_date","ap_startTime","ap_endTime")
+
+
 admin.site.register(patient,pateintAdmin)
 admin.site.register(doctor,doctorAdmin)
 admin.site.register(imagePost,imagePostAdmin)
-admin.site.register(draft,draftAdmin)
 # admin.site.register(Category,CategoryAdmin)
+admin.site.register(appointmentData,appointmentDataAdmin)
 
 

@@ -3,18 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            padding: 20px;
-            margin-top: 35px;
-            float: left;
-            
-        }
-    </style>
+    <title>Doctors List</title>
+    <link rel="stylesheet" href="/static/appointment.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
@@ -47,17 +37,22 @@
         </div>
     </nav>
     <div class="container">
-        <h1>{{catog}}</h1>
-        <ul>
-            {% for post in posts %}
-                <li>
-                    <h2>{{ post.iTitle }}</h2>
-                    <img src="{{ post.iImage.url }}" alt="{{ post.iTitle }}" width="200">
-                    <p>{{ post.iSummary |truncatechars:15 }}</p>
-                    <hr>
-                </li>
+        <h1>Our Doctors</h1>
+        <div class="doctor-list">
+            <!-- Example doctor item -->
+            {% for details in doc %}
+            <div class="doctor-item">
+                <img src={{details.d_Picture}} alt="Profile Pic" class="profile-pic">
+                <div class="doctor-info">
+                    <h2 style="position: relative; left: 13px; top: 4px;">Dr. {{details.d_Firstname}} {{details.d_Lastname}}</h2>
+                    <form method="post" action="{% url 'appointmentForm' %}">
+                        {% csrf_token %}
+                        <button class="book-btn" style="position: relative; left: 771px; top: -29px; width: 174.106px; height: 44.3014px; transform: translate(-19.6078px, 0px); transition: none;" value={{details.d_Username}} name="myButton">Book Appointment</button>
+                    </form>
+                </div>
+            </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
