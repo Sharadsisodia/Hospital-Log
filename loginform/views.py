@@ -440,6 +440,85 @@ def oauth2callback(request):
 
     return redirect('appointSuccess')
 
+# def appointSuccess(request):
+#     if 'credentials' not in request.session:
+#         return redirect('google_auth')
+
+#     # Load the credentials from the session
+#     credentials = Credentials(**request.session['credentials'])
+
+#     # Ensure the credentials are still valid and refresh if necessary
+#     if credentials.expired and credentials.refresh_token:
+#         credentials.refresh(Request())
+
+#     service = build('calendar', 'v3', credentials=credentials)
+
+#     if request.method == 'POST':
+#         docUsername = request.POST.get('myButton')
+#         doctorna = get_object_or_404(doctor, d_Username=docUsername)
+#         patientna = request.user.patient  # Assuming the user is logged in as a patient
+#         print(patientna)
+#         speci = request.POST.get('speciality')
+#         datee = request.POST.get('date')
+#         startTime = request.POST.get('start-time')
+
+#         # Convert date and time strings to datetime objects
+#         datee = datetime.strptime(datee, "%Y-%m-%d").date()
+#         startTime = datetime.strptime(startTime, "%H:%M").time()
+
+#         # Combine date and time into a single datetime object
+#         start_datetime = datetime.combine(datee, startTime)
+#         end_datetime = start_datetime + timedelta(minutes=45)
+
+#         # Event details
+#         event = {
+#             'summary': f'Appointment: {speci}',
+#             'location': f'{doctorna.d_City}, {doctorna.d_State}',
+#             'description': f'Meeting with Dr. {doctorna.d_Firstname} {doctorna.d_Lastname}',
+#             'start': {
+#                 'dateTime': start_datetime.isoformat(),
+#                 'timeZone': 'Asia/Kolkata',
+#             },
+#             'end': {
+#                 'dateTime': end_datetime.isoformat(),
+#                 'timeZone': 'Asia/Kolkata',
+#             },
+#             'attendees': [
+#                 {'email': doctorna.d_EmailId},
+#                 {'email': patientna.p_EmailId},
+#             ],
+#             'reminders': {
+#                 'useDefault': False,
+#                 'overrides': [
+#                     {'method': 'email', 'minutes': 24 * 60},
+#                     {'method': 'popup', 'minutes': 10},
+#                 ],
+#             },
+#         }
+
+#         # Insert the event into the calendar
+#         event = service.events().insert(calendarId='primary', body=event).execute()
+
+#         # Save appointment data in the database
+#         apData = appointmentData(
+#             ap_username=doctorna.d_Username,
+#             ap_specilist=speci,
+#             ap_date=datee,
+#             ap_startTime=start_datetime.time(),  # store time part only
+#             ap_endTime=end_datetime.time()  # store time part only
+#         )
+#         apData.save()
+
+#         content = {
+#             "doctorName": doctorna,
+#             "date": datee,
+#             "starttime": start_datetime.time(),
+#             "endtime": end_datetime.time()
+#         }
+#         return render(request, "appointSuccess.html", content)
+#     return render(request,'appointSuccess.html')
+
+
 def appointSuccess(request):
     if 'credentials' not in request.session:
         return redirect('google_auth')
@@ -458,6 +537,7 @@ def appointSuccess(request):
         doctorna = get_object_or_404(doctor, d_Username=docUsername)
         patientna = request.user.patient  # Assuming the user is logged in as a patient
         print(patientna)
+
         speci = request.POST.get('speciality')
         datee = request.POST.get('date')
         startTime = request.POST.get('start-time')
@@ -505,7 +585,7 @@ def appointSuccess(request):
             ap_specilist=speci,
             ap_date=datee,
             ap_startTime=start_datetime.time(),  # store time part only
-            ap_endTime=end_datetime.time()  # store time part only
+            ap_endTime=end_datetime  # store entire datetime
         )
         apData.save()
 
@@ -516,12 +596,15 @@ def appointSuccess(request):
             "endtime": end_datetime.time()
         }
         return render(request, "appointSuccess.html", content)
-    return render(request,'appointSuccess.html')
+
+    return render(request, 'appointSuccess.html')
 
 def credentials_to_dict(credentials):
-    return {'token': credentials.token,
-            'refresh_token': credentials.refresh_token,
-            'token_uri': credentials.token_uri,
-            'client_id': credentials.client_id,
-            'client_secret': credentials.client_secret,
-            'scopes': credentials.scopes}
+    return {
+        'token': credentials.token,
+        'refresh_token': credentials.refresh_token,
+        'token_uri': credentials.token_uri,
+        'client_id': credentials.client_id,
+        'client_secret': credentials.client_secret,
+        'scopes': credentials.scopes
+    }
