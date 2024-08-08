@@ -42,7 +42,7 @@
             <!-- Example doctor item -->
             {% for details in doc %}
             <div class="doctor-item">
-                <img src="{{details.d_Picture}}" alt="Profile Pic" class="profile-pic">
+                <img src="media/{{ details.d_Picture }}" alt="Profile Pic" class="profile-pic">
                 <div class="doctor-info">
                     <h2 style="position: relative; left: 13px; top: 4px;">Dr. {{details.d_Firstname}} {{details.d_Lastname}}</h2>
                     <form method="post" action="{% url 'appointmentForm' %}">
