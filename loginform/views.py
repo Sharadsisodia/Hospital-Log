@@ -282,111 +282,6 @@ def appointmentForm(request):
 
 
 
-# from google.oauth2 import service_account
-# from googleapiclient.discovery import build
-# from datetime import datetime, timedelta
-# from django.shortcuts import render, get_object_or_404
-
-# from django.shortcuts import render, redirect
-# from django.conf import settings
-# from google.oauth2.credentials import Credentials
-# from google_auth_oauthlib.flow import InstalledAppFlow
-# from google.auth.transport.requests import Request
-# from googleapiclient.discovery import build
-# import os
-# import datetime
-
-
-# SCOPES = ['https://www.googleapis.com/auth/calendar']
-
-# def authenticate_user(request):
-#     creds = None
-#     if 'credentials' in request.session:
-#         creds = Credentials.from_authorized_user_info(request.session['credentials'])
-#     if not creds or not creds.valid:
-#         if creds and creds.expired and creds.refresh_token:
-#             creds.refresh(Request())
-#         else:
-#             flow = InstalledAppFlow.from_client_secrets_file(
-#                 settings.GOOGLE_CREDENTIALS_JSON, SCOPES)
-#             creds = flow.run_local_server(port=0)
-#         request.session['credentials'] = creds.to_json()
-#     return creds
-
-# def appointSuccess(request):
-#     if request.method == 'POST':
-#         docUsername = request.POST.get('myButton')
-#         doctorna = get_object_or_404(doctor, d_Username=docUsername)
-#         speci = request.POST.get('speciality')
-#         datee = request.POST.get('date')
-#         startTime = request.POST.get('start-time')
-
-#         # Convert date and time strings to datetime objects
-#         datee = datetime.datetime.strptime(datee, "%Y-%m-%d").date()
-#         startTime = datetime.datetime.strptime(startTime, "%H:%M").time()
-
-#         # Combine date and time into a single datetime object
-#         start_datetime = datetime.datetime.combine(datee, startTime)
-#         end_datetime = start_datetime + datetime.timedelta(minutes=45)
-
-#         # Google Calendar API integration
-#         creds = authenticate_user(request)
-#         service = build('calendar', 'v3', credentials=creds)
-
-#         # Event details
-#         event = {
-#             'summary': f'Appointment: {speci}',
-#             'location': f'{doctorna.d_City}, {doctorna.d_State}',
-#             'description': f'Meeting with Dr. {doctorna.d_Firstname} {doctorna.d_Lastname}',
-#             'start': {
-#                 'dateTime': start_datetime.isoformat(),
-#                 'timeZone': 'Asia/Kolkata',
-#             },
-#             'end': {
-#                 'dateTime': end_datetime.isoformat(),
-#                 'timeZone': 'Asia/Kolkata',
-#             },
-#             'attendees': [
-#                 {'email': doctorna.d_EmailId}
-#             ],
-#             'reminders': {
-#                 'useDefault': False,
-#                 'overrides': [
-#                     {'method': 'email', 'minutes': 24 * 60},
-#                     {'method': 'popup', 'minutes': 10},
-#                 ],
-#             },
-#         }
-
-#         # Insert the event into the calendar
-#         event = service.events().insert(calendarId='primary', body=event).execute()
-
-#         # Save appointment data in the database
-#         apData = appointmentData(
-#             ap_username=doctorna.d_Username,
-#             ap_specilist=speci,
-#             ap_date=datee,
-#             ap_startTime=start_datetime.time(),  # store time part only
-#             ap_endTime=end_datetime.time()  # store time part only
-#         )
-#         apData.save()
-
-#         content = {
-#             "doctorName": doctorna,
-#             "date": datee,
-#             "starttime": start_datetime.time(),
-#             "endtime": end_datetime.time()
-#         }
-#         return render(request, "appointSuccess.html", content)
-
-
-
-
-
-
-
-
-
 import os
 import json
 from django.shortcuts import render, redirect
@@ -400,15 +295,13 @@ from django.http import HttpResponse
 
 # Path to the client secret JSON file
 CLIENT_SECRETS_FILE = os.path.join(settings.BASE_DIR, 'client_secret.json')
-import os
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
 # Scopes for accessing Google Calendar API
 SCOPES = ['https://www.googleapis.com/auth/calendar.events']
 
 def google_auth(request):
     # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
-    flow = Flow.from_client_secrets_file(
-        CLIENT_SECRETS_FILE, scopes=SCOPES)
+    flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
 
     # Specify the redirect URI. This should match the one in Google Cloud Console.
     flow.redirect_uri = request.build_absolute_uri('/oauth2callback/')
@@ -440,84 +333,6 @@ def oauth2callback(request):
     request.session['credentials'] = credentials_to_dict(credentials)
 
     return redirect('appointSuccess')
-
-# def appointSuccess(request):
-#     if 'credentials' not in request.session:
-#         return redirect('google_auth')
-
-#     # Load the credentials from the session
-#     credentials = Credentials(**request.session['credentials'])
-
-#     # Ensure the credentials are still valid and refresh if necessary
-#     if credentials.expired and credentials.refresh_token:
-#         credentials.refresh(Request())
-
-#     service = build('calendar', 'v3', credentials=credentials)
-
-#     if request.method == 'POST':
-#         docUsername = request.POST.get('myButton')
-#         doctorna = get_object_or_404(doctor, d_Username=docUsername)
-#         patientna = request.user.patient  # Assuming the user is logged in as a patient
-#         print(patientna)
-#         speci = request.POST.get('speciality')
-#         datee = request.POST.get('date')
-#         startTime = request.POST.get('start-time')
-
-#         # Convert date and time strings to datetime objects
-#         datee = datetime.strptime(datee, "%Y-%m-%d").date()
-#         startTime = datetime.strptime(startTime, "%H:%M").time()
-
-#         # Combine date and time into a single datetime object
-#         start_datetime = datetime.combine(datee, startTime)
-#         end_datetime = start_datetime + timedelta(minutes=45)
-
-#         # Event details
-#         event = {
-#             'summary': f'Appointment: {speci}',
-#             'location': f'{doctorna.d_City}, {doctorna.d_State}',
-#             'description': f'Meeting with Dr. {doctorna.d_Firstname} {doctorna.d_Lastname}',
-#             'start': {
-#                 'dateTime': start_datetime.isoformat(),
-#                 'timeZone': 'Asia/Kolkata',
-#             },
-#             'end': {
-#                 'dateTime': end_datetime.isoformat(),
-#                 'timeZone': 'Asia/Kolkata',
-#             },
-#             'attendees': [
-#                 {'email': doctorna.d_EmailId},
-#                 {'email': patientna.p_EmailId},
-#             ],
-#             'reminders': {
-#                 'useDefault': False,
-#                 'overrides': [
-#                     {'method': 'email', 'minutes': 24 * 60},
-#                     {'method': 'popup', 'minutes': 10},
-#                 ],
-#             },
-#         }
-
-#         # Insert the event into the calendar
-#         event = service.events().insert(calendarId='primary', body=event).execute()
-
-#         # Save appointment data in the database
-#         apData = appointmentData(
-#             ap_username=doctorna.d_Username,
-#             ap_specilist=speci,
-#             ap_date=datee,
-#             ap_startTime=start_datetime.time(),  # store time part only
-#             ap_endTime=end_datetime.time()  # store time part only
-#         )
-#         apData.save()
-
-#         content = {
-#             "doctorName": doctorna,
-#             "date": datee,
-#             "starttime": start_datetime.time(),
-#             "endtime": end_datetime.time()
-#         }
-#         return render(request, "appointSuccess.html", content)
-#     return render(request,'appointSuccess.html')
 
 
 def appointSuccess(request):
@@ -598,7 +413,7 @@ def appointSuccess(request):
         }
         return render(request, "appointSuccess.html", content)
 
-    # return render(request, 'appointSuccess.html')
+    return render(request, 'appointSuccess.html')
 
 def credentials_to_dict(credentials):
     return {
