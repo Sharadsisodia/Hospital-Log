@@ -12,25 +12,25 @@ This is a Django-based web application that allows patients to book appointments
 - **Static and Media Files**: Supports static file handling (CSS, JS) and media uploads (images, documents).
 
 ## Project Structure
-loginform/
-├── formlogin/
-│ ├── migrations/
-│ ├── static/
-│ ├── templates/
-│ ├── admin.py
-│ ├── apps.py
-│ ├── forms.py
-│ ├── models.py
-│ ├── tests.py
-│ └── views.py
-├── loginform/
-│ ├── init.py
-│ ├── asgi.py
-│ ├── settings.py
-│ ├── urls.py
-│ └── wsgi.py
-├── manage.py
-└── README.md
+loginform/ <br>
+├── formlogin/ <br>
+│ ├── migrations/ <br>
+│ ├── static/ <br>
+│ ├── templates/ <br>
+│ ├── admin.py <br>
+│ ├── apps.py <br>
+│ ├── forms.py <br>
+│ ├── models.py <br>
+│ ├── tests.py <br>
+│ └── views.py <br>
+├── loginform/ <br>
+│ ├── init.py <br>
+│ ├── asgi.py <br>
+│ ├── settings.py <br>
+│ ├── urls.py <br>
+│ └── wsgi.py <br>
+├── manage.py <br>
+└── README.md <br>
 
 ## Google Calendar Integration
 
