@@ -1,4 +1,4 @@
-Patient-Doctor Appointment Booking System
+#Patient-Doctor Appointment Booking System
 This is a Django-based web application that allows patients to book appointments with doctors, and doctors to manage their schedules. The system integrates with Google Calendar API to provide seamless booking experiences and supports a range of features like user authentication, appointment management, and content sharing between doctors and patients.
 
 Author
